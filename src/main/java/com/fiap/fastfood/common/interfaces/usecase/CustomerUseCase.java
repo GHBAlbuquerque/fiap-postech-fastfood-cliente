@@ -10,6 +10,8 @@ import com.fiap.fastfood.core.entity.Customer;
 public interface CustomerUseCase {
     Customer getCustomerByCpf(String cpf, CustomerGateway customerGateway) throws EntityNotFoundException;
 
+    Customer getCustomerById(Long id, CustomerGateway customerGateway) throws EntityNotFoundException;
+
     Customer registerCustomer(Customer customer, CustomerGateway customerGateway, AuthenticationGateway authenticationGateway)
             throws AlreadyRegisteredException, IdentityProviderRegistrationException;
 

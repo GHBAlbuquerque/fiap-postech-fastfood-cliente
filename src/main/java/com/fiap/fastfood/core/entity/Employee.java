@@ -13,5 +13,5 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 public class Employee extends Person {
 
-    private String id;
+    private Long id;
 }

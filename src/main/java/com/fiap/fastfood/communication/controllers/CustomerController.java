@@ -48,10 +48,11 @@ public class CustomerController {
 
         final var customerReq = CustomerBuilder.fromRequestToDomain(request);
         final var customer = useCase.registerCustomer(customerReq, customerGateway, authenticationGateway);
+        final var customerId = customer.getId().toString();
 
-        final var uri = URI.create(customer.getId());
+        final var uri = URI.create(customerId);
 
-        return ResponseEntity.created(uri).body(new RegisterCustomerResponse(customer.getId()));
+        return ResponseEntity.created(uri).body(new RegisterCustomerResponse(customerId));
 
     }
 

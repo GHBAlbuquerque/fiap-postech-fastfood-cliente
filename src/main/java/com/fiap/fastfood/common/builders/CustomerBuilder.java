@@ -42,7 +42,7 @@ public class CustomerBuilder {
     }
 
     public static CustomerORM fromDomainToOrm(Customer customer) {
-        return (CustomerORM) new CustomerORM()
+        return new CustomerORM()
                 .setId(customer.getId())
                 .setName(customer.getName())
                 .setBirthday(customer.getBirthday())

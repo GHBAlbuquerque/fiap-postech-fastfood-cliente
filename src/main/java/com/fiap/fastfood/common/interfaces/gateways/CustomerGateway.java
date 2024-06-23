@@ -6,6 +6,8 @@ public interface CustomerGateway {
 
     Customer getCustomerByCpf(String cpf);
 
+    Customer getCustomerById(Long id);
+
     Customer saveCustomer(Customer customer);
 
 }

@@ -26,9 +26,9 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
             );
         }
 
-        authenticationGateway.createUserAuthentication(customer.getCpf(),
+        /*authenticationGateway.createUserAuthentication(customer.getCpf(),
                 customer.getPassword(),
-                customer.getEmail());
+                customer.getEmail());*/
 
         return customerGateway.saveCustomer(customer);
     }
@@ -37,6 +37,21 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
     public Customer getCustomerByCpf(String cpf, CustomerGateway customerGateway)
             throws EntityNotFoundException {
         final var client = customerGateway.getCustomerByCpf(cpf);
+
+        if (client == null) {
+            throw new EntityNotFoundException(
+                    "CLIENT-02",
+                    "Client not found."
+            );
+        }
+
+        return client;
+    }
+
+    @Override
+    public Customer getCustomerById(Long id, CustomerGateway customerGateway)
+            throws EntityNotFoundException {
+        final var client = customerGateway.getCustomerById(id);
 
         if (client == null) {
             throw new EntityNotFoundException(

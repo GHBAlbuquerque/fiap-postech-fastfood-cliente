@@ -25,8 +25,12 @@ public class CustomerGatewayImpl implements CustomerGateway {
     @Override
     public Customer getCustomerByCpf(String cpf) {
         final var result = repository.findByCpf(cpf);
-        if (result != null) return CustomerBuilder.fromOrmToDomain(result);
+        return result.map(CustomerBuilder::fromOrmToDomain).orElse(null);
+    }
 
-        return null;
+    @Override
+    public Customer getCustomerById(Long id) {
+        final var result = repository.findById(id);
+        return result.map(CustomerBuilder::fromOrmToDomain).orElse(null);
     }
 }

@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 public class Customer extends Person {
 
-    private String id;
+    private Long id;
 
     public static ValidationResult validate(Customer customer, Boolean cpfInUse) {
         final var validationResult = new ValidationResult();
