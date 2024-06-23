@@ -1,12 +1,13 @@
 package com.fiap.fastfood.external.orm;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,10 +18,11 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "Customer")
+@Entity
+@Table(name = "Customer")
 public class CustomerORM {
 
-    @MongoId
+    @Id
     private String id;
     private String name;
     private LocalDate birthday;
