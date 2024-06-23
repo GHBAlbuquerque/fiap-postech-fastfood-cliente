@@ -26,9 +26,9 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
             );
         }
 
-        /*authenticationGateway.createUserAuthentication(customer.getCpf(),
+        authenticationGateway.createUserAuthentication(customer.getCpf(),
                 customer.getPassword(),
-                customer.getEmail());*/
+                customer.getEmail());
 
         return customerGateway.saveCustomer(customer);
     }
