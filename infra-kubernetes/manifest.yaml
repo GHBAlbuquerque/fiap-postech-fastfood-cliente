@@ -26,13 +26,13 @@ spec:
               memory: "1Gi"
           env:
             - name: DB_HOST
-              value: "db_host"
+              value: "jdbc:mysql://fiap-postech-db.cvnbiwixxp7f.us-east-1.rds.amazonaws.com:3306/clientes_db"
             - name: DB_USER
-              value: "db_user"
+              value: "admin"
             - name: DB_PASSWORD
-              value: "db_password"
+              value: "password"
             - name: COGNITO_ID
-              value: "cognito_id"
+              value: "17u8qu5sh0aega9rk7g4sh61i4"
           ports:
             - containerPort: 80
               protocol: TCP
