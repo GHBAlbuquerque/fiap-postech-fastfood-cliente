@@ -78,6 +78,22 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDetails.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDetails.class)))
     })
+    @GetMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
+    public ResponseEntity<GetCustomerResponse> getCustomerById(@PathVariable Long id)
+            throws EntityNotFoundException {
+
+        final var customer = useCase.getCustomerById(id, customerGateway);
+        final var customerResponse = CustomerBuilder.fromDomainToResponse(customer);
+
+        return ResponseEntity.ok(customerResponse);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDetails.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDetails.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDetails.class)))
+    })
     @PostMapping(value = "/confirmation", produces = "application/json", consumes = "application/json")
     public ResponseEntity<Boolean> confirmSignUp(@RequestBody(required = true) ConfirmSignUpRequest confirmSignUpRequest)
             throws IdentityProviderRegistrationException {
