@@ -42,6 +42,7 @@ kind: Service
 metadata:
   name: fiap-postech-service-cliente
 spec:
+  type: NodePort
   selector:
     app: fiap-postech-fastfood-cliente
   ports:
