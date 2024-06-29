@@ -42,7 +42,7 @@ kind: Service
 metadata:
   name: fiap-postech-service-cliente
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: fiap-postech-fastfood-cliente
   ports:
