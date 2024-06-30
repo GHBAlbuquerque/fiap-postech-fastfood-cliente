@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,7 +44,7 @@ public class CustomerController {
     })
     @PostMapping(produces = "application/json", consumes = "application/json")
     public ResponseEntity<RegisterCustomerResponse> registerCustomer(
-            @RequestBody RegisterCustomerRequest request
+            @RequestBody @Valid RegisterCustomerRequest request
     ) throws AlreadyRegisteredException, IdentityProviderRegistrationException {
 
         final var customerReq = CustomerBuilder.fromRequestToDomain(request);
@@ -95,7 +96,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDetails.class)))
     })
     @PostMapping(value = "/confirmation", produces = "application/json", consumes = "application/json")
-    public ResponseEntity<Boolean> confirmSignUp(@RequestBody(required = true) ConfirmSignUpRequest confirmSignUpRequest)
+    public ResponseEntity<Boolean> confirmSignUp(@RequestBody(required = true) @Valid ConfirmSignUpRequest confirmSignUpRequest)
             throws IdentityProviderRegistrationException {
 
         final var response = useCase.confirmCustomerSignUp(confirmSignUpRequest.getCpf(),

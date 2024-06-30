@@ -21,7 +21,7 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
         if (!validationResult.getIsValid()) {
             throw new AlreadyRegisteredException(
                     "CLIENT-01",
-                    "Couldn't complete registration for client.",
+                    "Couldn't complete registration for customer.",
                     validationResult.getErrors()
             );
         }
@@ -41,7 +41,7 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
         if (client == null) {
             throw new EntityNotFoundException(
                     "CLIENT-02",
-                    "Client not found."
+                    "Customer not found."
             );
         }
 
