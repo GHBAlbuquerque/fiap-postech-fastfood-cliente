@@ -50,3 +50,11 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+jacocoTestReport {
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: 'com/fiap/fastfood/common/exceptions/*/**')
+		}))
+	}
+}
