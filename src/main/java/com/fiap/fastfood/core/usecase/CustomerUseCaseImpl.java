@@ -15,12 +15,13 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
                                      CustomerGateway customerGateway,
                                      AuthenticationGateway authenticationGateway)
             throws AlreadyRegisteredException, IdentityProviderRegistrationException {
+
         final var cpfInUse = validateCpfInUse(customer.getCpf(), customerGateway);
         final var validationResult = Customer.validate(customer, cpfInUse);
 
         if (!validationResult.getIsValid()) {
             throw new AlreadyRegisteredException(
-                    "CLIENT-01",
+                    "CUSTOMER-01",
                     "Couldn't complete registration for customer.",
                     validationResult.getErrors()
             );
@@ -40,7 +41,7 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
 
         if (client == null) {
             throw new EntityNotFoundException(
-                    "CLIENT-02",
+                    "CUSTOMER-02",
                     "Customer not found."
             );
         }
@@ -55,7 +56,7 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
 
         if (client == null) {
             throw new EntityNotFoundException(
-                    "CLIENT-02",
+                    "CUSTOMER-02",
                     "Client not found."
             );
         }

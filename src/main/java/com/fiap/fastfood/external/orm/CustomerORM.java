@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Setter
 @Accessors(chain = true)
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "Customer")
 public class CustomerORM {
