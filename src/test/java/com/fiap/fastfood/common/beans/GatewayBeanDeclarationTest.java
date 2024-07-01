@@ -15,7 +15,7 @@ public class GatewayBeanDeclarationTest {
     private GatewayBeanDeclaration declaration;
 
     @Test
-    void CusttomerGatewayTest() {
+    void CustomerGatewayTest() {
         final var mock = Mockito.mock(CustomerRepository.class);
 
         final var result = declaration.customerGateway(mock);
