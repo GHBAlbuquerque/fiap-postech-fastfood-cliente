@@ -42,14 +42,11 @@ kind: Service
 metadata:
   name: fiap-postech-service-cliente
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: fiap-postech-fastfood-cliente
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8080
-
-
-
-
+      nodePort: 30007
