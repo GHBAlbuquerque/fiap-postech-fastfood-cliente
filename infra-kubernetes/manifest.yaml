@@ -41,6 +41,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: fiap-postech-service-cliente
+  namespace: fiap-pos-tech
 spec:
   type: NodePort
   selector:
