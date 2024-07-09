@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -20,11 +21,12 @@ public class CustomerControllerTest {
 
     @LocalServerPort
     private int port;
-/*
+
     @Test
     public void givenCustomerToRegisterThenRespondWithStatusCreated() {
-        final var registerCustomerRequest = new RegisterCustomerRequest("name", LocalDate.now(), "cpf", "email@email.com", "password");
-        final var registerCustoemrReponse = new RegisterCustomerResponse("1");
+        final var cpfTest = new SecureRandom().nextInt();
+        final var registerCustomerRequest = new RegisterCustomerRequest("name", LocalDate.now(), String.valueOf(cpfTest), "email@email.com", "password");
+        final var registerCustomreReponse = new RegisterCustomerResponse("1");
 
         given()
                 .port(port)
@@ -34,7 +36,7 @@ public class CustomerControllerTest {
                 .post("/customers")
                 .then()
                 .log().ifValidationFails()
-                //.statusCode(HttpStatus.CREATED.value())
+                .statusCode(HttpStatus.CREATED.value())
                 .contentType(JSON);
     }
 
@@ -43,8 +45,8 @@ public class CustomerControllerTest {
         final var getCustomerResponse = new GetCustomerResponse()
                 .setId(1L)
                 .setName("name")
-                .setCpf("cpf")
-                .setEmail("email")
+                .setCpf("93678719023")
+                .setEmail("FIAPauth123_")
                 .setBirthday(LocalDate.now())
                 .setCreationTimestamp(LocalDateTime.now())
                 .setUpdateTimestamp(LocalDateTime.now());
@@ -53,10 +55,10 @@ public class CustomerControllerTest {
                 .port(port)
                 .header("Content-Type", "application/json")
                 .when()
-                .get("/customers?cpf=123456789123")
+                .get("/customers?cpf=93678719023")
                 .then()
                 .log().ifValidationFails()
-                .statusCode(HttpStatus.NOT_FOUND.value())
+                .statusCode(HttpStatus.OK.value())
                 .contentType(JSON);
     }
 
@@ -88,5 +90,4 @@ public class CustomerControllerTest {
                 //.statusCode(HttpStatus.OK.value())
                 .contentType(JSON);
     }
-*/
 }
