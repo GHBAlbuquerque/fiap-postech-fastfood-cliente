@@ -76,7 +76,8 @@ jacocoTestReport {
 			fileTree(dir: it, exclude: [
 					'com/fiap/fastfood/common/exceptions/*/**',
 					'com/fiap/fastfood/core/entity/**',
-					'com/fiap/fastfood/common/dto/*/**'
+					'com/fiap/fastfood/common/dto/*/**',
+					'com/fiap/fastfood/common/validation/**'
 			])
 		}))
 	}
