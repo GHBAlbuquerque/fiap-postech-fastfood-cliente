@@ -24,11 +24,10 @@ public class CustomerControllerTest {
     @LocalServerPort
     private int port;
 
-    /*@Test
+    @Test
     public void givenCustomerToRegisterThenRespondWithStatusCreated() {
         final var cpfTest = new SecureRandom().nextInt();
         final var registerCustomerRequest = new RegisterCustomerRequest("name", LocalDate.now(), String.valueOf(cpfTest), "email@email.com", "password");
-        final var registerCustomreReponse = new RegisterCustomerResponse("1");
 
         given()
                 .port(port)
@@ -38,7 +37,7 @@ public class CustomerControllerTest {
                 .post("/customers")
                 .then()
                 .log().ifValidationFails()
-                //.statusCode(HttpStatus.CREATED.value())
+                .statusCode(HttpStatus.CREATED.value())
                 .contentType(JSON);
     }
 
@@ -60,7 +59,7 @@ public class CustomerControllerTest {
                 .get("/customers?cpf=93678719023")
                 .then()
                 .log().ifValidationFails()
-                //.statusCode(HttpStatus.OK.value())
+                .statusCode(HttpStatus.OK.value())
                 .contentType(JSON);
     }
 
@@ -73,7 +72,7 @@ public class CustomerControllerTest {
                 .get("/customers/1")
                 .then()
                 .log().ifValidationFails()
-                //.statusCode(HttpStatus.NOT_FOUND.value())
+                .statusCode(HttpStatus.NOT_FOUND.value())
                 .contentType(JSON);
     }
 
@@ -89,7 +88,7 @@ public class CustomerControllerTest {
                 .post("/customers/confirmation")
                 .then()
                 .log().ifValidationFails()
-                //.statusCode(HttpStatus.OK.value())
+                .statusCode(HttpStatus.OK.value())
                 .contentType(JSON);
-    }*/
+    }
 }
