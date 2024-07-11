@@ -37,38 +37,38 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
     @Override
     public Customer getCustomerByCpf(String cpf, CustomerGateway customerGateway)
             throws EntityNotFoundException {
-        final var client = customerGateway.getCustomerByCpf(cpf);
+        final var customer = customerGateway.getCustomerByCpf(cpf);
 
-        if (client == null) {
+        if (customer == null) {
             throw new EntityNotFoundException(
                     "CUSTOMER-02",
                     "Customer not found."
             );
         }
 
-        return client;
+        return customer;
     }
 
     @Override
     public Customer getCustomerById(Long id, CustomerGateway customerGateway)
             throws EntityNotFoundException {
-        final var client = customerGateway.getCustomerById(id);
+        final var customer = customerGateway.getCustomerById(id);
 
-        if (client == null) {
+        if (customer == null) {
             throw new EntityNotFoundException(
                     "CUSTOMER-02",
                     "Client not found."
             );
         }
 
-        return client;
+        return customer;
     }
 
     @Override
     public Boolean validateCpfInUse(String cpf, CustomerGateway customerGateway) {
-        final var clientUsingCpf = customerGateway.getCustomerByCpf(cpf);
+        final var customerUsingCpf = customerGateway.getCustomerByCpf(cpf);
 
-        return clientUsingCpf != null;
+        return customerUsingCpf != null;
     }
 
     @Override

@@ -59,7 +59,7 @@ public class CustomerControllerTest {
                 .get(path)
                 .then()
                 .log().ifValidationFails()
-                .statusCode(HttpStatus.OK.value())
+                .statusCode(HttpStatus.NOT_FOUND.value())
                 .contentType(JSON);
     }
 
