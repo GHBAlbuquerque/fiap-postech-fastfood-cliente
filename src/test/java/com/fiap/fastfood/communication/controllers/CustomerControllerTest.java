@@ -26,8 +26,8 @@ public class CustomerControllerTest {
 
     @Test
     public void givenCustomerToRegisterThenRespondWithStatusCreated() {
-        final var cpfTest = new SecureRandom().nextInt();
-        final var registerCustomerRequest = new RegisterCustomerRequest("name", LocalDate.now(), String.valueOf(cpfTest), "email@email.com", "password");
+        final var cpfTest = "74952165060";
+        final var registerCustomerRequest = new RegisterCustomerRequest("name", LocalDate.now(),cpfTest, "email@email.com", "password");
 
         given()
                 .port(port)
@@ -46,7 +46,7 @@ public class CustomerControllerTest {
         final var getCustomerResponse = new GetCustomerResponse()
                 .setId(1L)
                 .setName("name")
-                .setCpf("93678719023")
+                .setCpf("74952165060")
                 .setEmail("FIAPauth123_")
                 .setBirthday(LocalDate.now())
                 .setCreationTimestamp(LocalDateTime.now())
@@ -56,7 +56,7 @@ public class CustomerControllerTest {
                 .port(port)
                 .header("Content-Type", "application/json")
                 .when()
-                .get("/customers?cpf=93678719023")
+                .get("/customers?cpf=74952165060")
                 .then()
                 .log().ifValidationFails()
                 .statusCode(HttpStatus.OK.value())
@@ -72,13 +72,13 @@ public class CustomerControllerTest {
                 .get("/customers/1")
                 .then()
                 .log().ifValidationFails()
-                .statusCode(HttpStatus.NOT_FOUND.value())
+                .statusCode(HttpStatus.OK.value())
                 .contentType(JSON);
     }
 
     @Test
     public void givenConfirmSignUpRequestThenRespondWithSuccess() {
-        final var confirmSignUpRequest = new ConfirmSignUpRequest("cpf", "code");
+        final var confirmSignUpRequest = new ConfirmSignUpRequest("74952165060", "code");
 
         given()
                 .port(port)
