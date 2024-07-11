@@ -73,11 +73,11 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
                 "Error trying to register new user on Identity Provider",
                 ex.getCode(),
                 ex.getMessage(),
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.BAD_REQUEST.value(),
                 new Date(),
                 ex.getErrors());
 
-        return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
 

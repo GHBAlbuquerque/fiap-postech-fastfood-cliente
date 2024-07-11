@@ -3,7 +3,6 @@ package com.fiap.fastfood.communication.controllers;
 import com.fiap.fastfood.common.dto.request.ConfirmSignUpRequest;
 import com.fiap.fastfood.common.dto.request.RegisterCustomerRequest;
 import com.fiap.fastfood.common.dto.response.GetCustomerResponse;
-import com.fiap.fastfood.common.dto.response.RegisterCustomerResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -19,16 +18,14 @@ import static io.restassured.http.ContentType.JSON;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CustomerControllerTest {
 
-    //FIXME testes só funcionam com banco local, na AWS tenho timeout socket exception
-
     @LocalServerPort
     private int port;
 
-    /*@Test
+    private final String CPF_TEST = String.valueOf(new SecureRandom().nextInt());
+
+    @Test
     public void givenCustomerToRegisterThenRespondWithStatusCreated() {
-        final var cpfTest = new SecureRandom().nextInt();
-        final var registerCustomerRequest = new RegisterCustomerRequest("name", LocalDate.now(), String.valueOf(cpfTest), "email@email.com", "password");
-        final var registerCustomreReponse = new RegisterCustomerResponse("1");
+        final var registerCustomerRequest = new RegisterCustomerRequest("name", LocalDate.now(), CPF_TEST, "email@email.com", "password");
 
         given()
                 .port(port)
@@ -38,7 +35,7 @@ public class CustomerControllerTest {
                 .post("/customers")
                 .then()
                 .log().ifValidationFails()
-                //.statusCode(HttpStatus.CREATED.value())
+                .statusCode(HttpStatus.CREATED.value())
                 .contentType(JSON);
     }
 
@@ -47,20 +44,22 @@ public class CustomerControllerTest {
         final var getCustomerResponse = new GetCustomerResponse()
                 .setId(1L)
                 .setName("name")
-                .setCpf("93678719023")
+                .setCpf(CPF_TEST)
                 .setEmail("FIAPauth123_")
                 .setBirthday(LocalDate.now())
                 .setCreationTimestamp(LocalDateTime.now())
                 .setUpdateTimestamp(LocalDateTime.now());
 
+        final var path = "/customers?cpf=" + CPF_TEST;
+
         given()
                 .port(port)
                 .header("Content-Type", "application/json")
                 .when()
-                .get("/customers?cpf=93678719023")
+                .get(path)
                 .then()
                 .log().ifValidationFails()
-                //.statusCode(HttpStatus.OK.value())
+                .statusCode(HttpStatus.NOT_FOUND.value())
                 .contentType(JSON);
     }
 
@@ -73,13 +72,13 @@ public class CustomerControllerTest {
                 .get("/customers/1")
                 .then()
                 .log().ifValidationFails()
-                //.statusCode(HttpStatus.NOT_FOUND.value())
+                .statusCode(HttpStatus.OK.value())
                 .contentType(JSON);
     }
 
     @Test
     public void givenConfirmSignUpRequestThenRespondWithSuccess() {
-        final var confirmSignUpRequest = new ConfirmSignUpRequest("cpf", "code");
+        final var confirmSignUpRequest = new ConfirmSignUpRequest("74952165060", "code");
 
         given()
                 .port(port)
@@ -89,7 +88,7 @@ public class CustomerControllerTest {
                 .post("/customers/confirmation")
                 .then()
                 .log().ifValidationFails()
-                //.statusCode(HttpStatus.OK.value())
+                .statusCode(HttpStatus.BAD_REQUEST.value())
                 .contentType(JSON);
-    }*/
+    }
 }
