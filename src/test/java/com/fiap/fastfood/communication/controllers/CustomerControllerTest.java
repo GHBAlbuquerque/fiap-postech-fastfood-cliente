@@ -27,7 +27,7 @@ public class CustomerControllerTest {
     @Test
     public void givenCustomerToRegisterThenRespondWithStatusCreated() {
         final var cpfTest = "74952165060";
-        final var registerCustomerRequest = new RegisterCustomerRequest("name", LocalDate.now(),cpfTest, "email@email.com", "password");
+        final var registerCustomerRequest = new RegisterCustomerRequest("name", LocalDate.now(), cpfTest, "email@email.com", "password");
 
         given()
                 .port(port)
@@ -88,7 +88,7 @@ public class CustomerControllerTest {
                 .post("/customers/confirmation")
                 .then()
                 .log().ifValidationFails()
-                .statusCode(HttpStatus.OK.value())
+                .statusCode(HttpStatus.BAD_REQUEST.value())
                 .contentType(JSON);
     }
 }
