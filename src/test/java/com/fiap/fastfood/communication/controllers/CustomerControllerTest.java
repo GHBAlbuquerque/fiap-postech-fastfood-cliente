@@ -3,7 +3,6 @@ package com.fiap.fastfood.communication.controllers;
 import com.fiap.fastfood.common.dto.request.ConfirmSignUpRequest;
 import com.fiap.fastfood.common.dto.request.RegisterCustomerRequest;
 import com.fiap.fastfood.common.dto.response.GetCustomerResponse;
-import com.fiap.fastfood.common.dto.response.RegisterCustomerResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -19,15 +18,14 @@ import static io.restassured.http.ContentType.JSON;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CustomerControllerTest {
 
-    //FIXME testes só funcionam com banco local, na AWS tenho timeout socket exception
-
     @LocalServerPort
     private int port;
 
+    private final String CPF_TEST = String.valueOf(new SecureRandom().nextInt());
+
     @Test
     public void givenCustomerToRegisterThenRespondWithStatusCreated() {
-        final var cpfTest = "74952165060";
-        final var registerCustomerRequest = new RegisterCustomerRequest("name", LocalDate.now(), cpfTest, "email@email.com", "password");
+        final var registerCustomerRequest = new RegisterCustomerRequest("name", LocalDate.now(), CPF_TEST, "email@email.com", "password");
 
         given()
                 .port(port)
@@ -46,17 +44,19 @@ public class CustomerControllerTest {
         final var getCustomerResponse = new GetCustomerResponse()
                 .setId(1L)
                 .setName("name")
-                .setCpf("74952165060")
+                .setCpf(CPF_TEST)
                 .setEmail("FIAPauth123_")
                 .setBirthday(LocalDate.now())
                 .setCreationTimestamp(LocalDateTime.now())
                 .setUpdateTimestamp(LocalDateTime.now());
 
+        final var path = "/customers?cpf=" + CPF_TEST;
+
         given()
                 .port(port)
                 .header("Content-Type", "application/json")
                 .when()
-                .get("/customers?cpf=74952165060")
+                .get(path)
                 .then()
                 .log().ifValidationFails()
                 .statusCode(HttpStatus.OK.value())
