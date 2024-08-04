@@ -33,6 +33,8 @@ spec:
               value: "password"
             - name: COGNITO_ID
               value: "17u8qu5sh0aega9rk7g4sh61i4"
+            - name: ACCOUNT_ID
+              value: "731362576078"
           ports:
             - containerPort: 80
               protocol: TCP
