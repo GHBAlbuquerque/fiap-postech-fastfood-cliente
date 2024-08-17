@@ -26,13 +26,13 @@ spec:
               memory: "1Gi"
           env:
             - name: DB_HOST
-              value: "jdbc:mysql://fiap-postech-db.cvnbiwixxp7f.us-east-1.rds.amazonaws.com:3306/clientes_db"
+              value: "jdbc:mysql://fiap-postech-db.c7yobqll710z.us-east-1.rds.amazonaws.com:3306/clientes_db"
             - name: DB_USER
               value: "admin"
             - name: DB_PASSWORD
               value: "password"
             - name: COGNITO_ID
-              value: "17u8qu5sh0aega9rk7g4sh61i4"
+              value: ""
             - name: ACCOUNT_ID
               value: "731362576078"
           ports:
