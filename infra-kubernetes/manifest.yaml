@@ -32,9 +32,9 @@ spec:
             - name: DB_PASSWORD
               value: "password"
             - name: COGNITO_ID
-              value: ""
+              value: "5knk8gad7neb3h7n91rpcigicu"
             - name: ACCOUNT_ID
-              value: "731362576078"
+              value: "673847524989"
           ports:
             - containerPort: 80
               protocol: TCP
