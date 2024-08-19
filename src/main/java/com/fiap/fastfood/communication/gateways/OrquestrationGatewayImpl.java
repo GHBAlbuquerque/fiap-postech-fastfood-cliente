@@ -43,7 +43,7 @@ public class OrquestrationGatewayImpl implements OrquestrationGateway {
         logger.info(
                 LoggingPattern.COMMAND_INIT_LOG,
                 message.getHeaders().getSagaId(),
-                message.getHeaders().getMicrosservice()
+                MS_SAGA
         );
 
         TransactionInformationStorage.fill(message.getHeaders());
@@ -59,13 +59,13 @@ public class OrquestrationGatewayImpl implements OrquestrationGateway {
 
             logger.info(LoggingPattern.COMMAND_END_LOG,
                     message.getHeaders().getSagaId(),
-                    message.getHeaders().getMicrosservice());
+                    MS_SAGA);
 
         } catch (Exception ex) {
 
             logger.info(LoggingPattern.COMMAND_ERROR_LOG,
                     message.getHeaders().getSagaId(),
-                    message.getHeaders().getMicrosservice(),
+                    MS_SAGA,
                     ex.getMessage(),
                     message.toString());
 
