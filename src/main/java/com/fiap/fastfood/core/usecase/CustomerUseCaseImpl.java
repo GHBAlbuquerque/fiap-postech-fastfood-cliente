@@ -2,6 +2,7 @@ package com.fiap.fastfood.core.usecase;
 
 import com.fiap.fastfood.common.exceptions.custom.AlreadyRegisteredException;
 import com.fiap.fastfood.common.exceptions.custom.EntityNotFoundException;
+import com.fiap.fastfood.common.exceptions.custom.ExceptionCodes;
 import com.fiap.fastfood.common.exceptions.custom.IdentityProviderRegistrationException;
 import com.fiap.fastfood.common.interfaces.gateways.AuthenticationGateway;
 import com.fiap.fastfood.common.interfaces.gateways.CustomerGateway;
@@ -21,7 +22,7 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
 
         if (!validationResult.getIsValid()) {
             throw new AlreadyRegisteredException(
-                    "CUSTOMER-01",
+                    ExceptionCodes.CUSTOMER_02_ALREADY_REGISTERED,
                     "Couldn't complete registration for customer.",
                     validationResult.getErrors()
             );
@@ -41,7 +42,7 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
 
         if (customer == null) {
             throw new EntityNotFoundException(
-                    "CUSTOMER-02",
+                    ExceptionCodes.CUSTOMER_01_NOT_FOUND,
                     "Customer not found."
             );
         }
@@ -56,7 +57,7 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
 
         if (customer == null) {
             throw new EntityNotFoundException(
-                    "CUSTOMER-02",
+                    ExceptionCodes.CUSTOMER_01_NOT_FOUND,
                     "Client not found."
             );
         }

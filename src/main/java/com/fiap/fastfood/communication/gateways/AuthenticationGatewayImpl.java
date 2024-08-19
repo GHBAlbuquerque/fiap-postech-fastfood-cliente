@@ -2,6 +2,9 @@ package com.fiap.fastfood.communication.gateways;
 
 import com.fiap.fastfood.common.exceptions.custom.IdentityProviderRegistrationException;
 import com.fiap.fastfood.common.interfaces.gateways.AuthenticationGateway;
+import com.fiap.fastfood.common.logging.LoggingPattern;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
@@ -11,6 +14,8 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.ConfirmSign
 import software.amazon.awssdk.services.cognitoidentityprovider.model.SignUpRequest;
 
 import java.util.ArrayList;
+
+import static com.fiap.fastfood.common.exceptions.custom.ExceptionCodes.CUSTOMER_03_IDENTITY_PROVIDER;
 
 @Component
 public class AuthenticationGatewayImpl implements AuthenticationGateway {
@@ -23,9 +28,7 @@ public class AuthenticationGatewayImpl implements AuthenticationGateway {
 
     private final CognitoIdentityProviderClient identityProviderClient;
 
-    private final String HMAC_SHA256_ALGORITHM = "HmacSHA256";
-
-    private final String EMAIL_FIELD = "email";
+    private static final Logger logger = LogManager.getLogger(AuthenticationGatewayImpl.class);
 
     public AuthenticationGatewayImpl(CognitoIdentityProviderClient identityProviderClient) {
         this.identityProviderClient = identityProviderClient;
@@ -37,8 +40,9 @@ public class AuthenticationGatewayImpl implements AuthenticationGateway {
                                             String password,
                                             String email) throws IdentityProviderRegistrationException {
 
+        String emailField = "email";
         var attributeType = AttributeType.builder()
-                .name(EMAIL_FIELD)
+                .name(emailField)
                 .value(email)
                 .build();
 
@@ -55,12 +59,15 @@ public class AuthenticationGatewayImpl implements AuthenticationGateway {
                     .build();
 
             identityProviderClient.signUp(signUpRequest);
-            System.out.println(userName + " was registered.");
+
+            logger.info(LoggingPattern.IDENTITY_PROVIDER_USER_CREATED,
+                    userName);
+
 
             return true;
 
         } catch (CognitoIdentityProviderException e) {
-            throw new IdentityProviderRegistrationException(String.valueOf(e.statusCode()), e.getMessage());
+            throw new IdentityProviderRegistrationException(CUSTOMER_03_IDENTITY_PROVIDER, e.getMessage());
         }
     }
 
@@ -73,12 +80,14 @@ public class AuthenticationGatewayImpl implements AuthenticationGateway {
                     .build();
 
             identityProviderClient.confirmSignUp(signUpRequest);
-            System.out.println(userName + " was confirmed.");
+
+            logger.info(LoggingPattern.IDENTITY_PROVIDER_USER_CONFIRMED,
+                    userName);
 
             return true;
 
         } catch (CognitoIdentityProviderException e) {
-            throw new IdentityProviderRegistrationException(String.valueOf(e.statusCode()), e.getMessage());
+            throw new IdentityProviderRegistrationException(CUSTOMER_03_IDENTITY_PROVIDER, e.getMessage());
         }
     }
 }

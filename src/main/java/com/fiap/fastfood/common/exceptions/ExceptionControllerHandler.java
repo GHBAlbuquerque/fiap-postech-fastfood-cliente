@@ -26,7 +26,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         final var message = new ExceptionDetails(
                 "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
                 "The request could not be completed due to a conflict.",
-                ex.getCode(),
+                ex.getCode().name(),
                 ex.getMessage(),
                 HttpStatus.BAD_REQUEST.value(),
                 new Date(),
@@ -41,7 +41,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         final var message = new ExceptionDetails(
                 "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404",
                 "The requested resource was not found.",
-                ex.getCode(),
+                ex.getCode().name(),
                 ex.getMessage(),
                 HttpStatus.NOT_FOUND.value(),
                 new Date(),
@@ -56,7 +56,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         final var message = new ExceptionDetails(
                 "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
                 "Couldn't create entity on database. Try again with different values.",
-                ex.getCode(),
+                ex.getCode().name(),
                 ex.getMessage(),
                 HttpStatus.BAD_REQUEST.value(),
                 new Date(),
@@ -71,7 +71,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         final var message = new ExceptionDetails(
                 "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500",
                 "Error trying to register new user on Identity Provider",
-                ex.getCode(),
+                ex.getCode().name(),
                 ex.getMessage(),
                 HttpStatus.BAD_REQUEST.value(),
                 new Date(),
