@@ -1,47 +1,52 @@
 package com.fiap.fastfood.communication.gateways;
 
+import com.fiap.fastfood.common.exceptions.custom.CustomerNotificationException;
+import com.fiap.fastfood.common.exceptions.custom.ExceptionCodes;
 import com.fiap.fastfood.common.interfaces.gateways.NotificationGateway;
 import com.fiap.fastfood.common.interfaces.gateways.OrquestrationGateway;
+import com.fiap.fastfood.common.logging.LoggingPattern;
+import com.fiap.fastfood.common.logging.TransactionInformationStorage;
 import com.fiap.fastfood.core.entity.OrquestrationStepEnum;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import static com.fiap.fastfood.common.logging.Constants.MAX_RECEIVE_COUNT;
 
 public class NotificationGatewayImpl implements NotificationGateway {
 
     private static final Logger logger = LogManager.getLogger(NotificationGatewayImpl.class);
 
     @Override
-    public void notifyCustomer(Long customerId, OrquestrationStepEnum step, OrquestrationGateway orquestrationGateway) {
-        //TODO
-        /*
+    public void notifyCustomer(Long customerId, OrquestrationStepEnum step, OrquestrationGateway orquestrationGateway) throws CustomerNotificationException {
         logger.info(
-                LoggingPattern.PAYMENT_CREATION_INIT_LOG,
-                TransactionInformationStorage.getSagaId()
+                LoggingPattern.NOTIFICATION_INIT_LOG,
+                TransactionInformationStorage.getSagaId(),
+                step.name(),
+                customerId
         );
 
         try {
 
-            final var savedPayment = paymentGateway.save(payment);
+            //TODO implementar algum tipo de envio de e-mail
+            Thread.sleep(2000);
 
             orquestrationGateway.sendResponse(
                     TransactionInformationStorage.getOrderId(),
-                    Long.valueOf(TransactionInformationStorage.getCustomerId()),
-                    savedPayment.getId(),
-                    OrquestrationStepEnum.CREATE_PAYMENT,
+                    customerId,
+                    TransactionInformationStorage.getPaymentId(),
+                    OrquestrationStepEnum.NOTIFY_CUSTOMER,
                     Boolean.TRUE
             );
 
             logger.info(
-                    LoggingPattern.PAYMENT_CREATION_END_LOG,
+                    LoggingPattern.NOTIFICATION_END_LOG,
                     TransactionInformationStorage.getSagaId()
             );
-
-            return savedPayment;
 
         } catch (Exception ex) {
 
             logger.error(
-                    LoggingPattern.PAYMENT_CREATION_ERROR_LOG,
+                    LoggingPattern.NOTIFICATION_ERROR_LOG,
                     TransactionInformationStorage.getSagaId(),
                     ex.getMessage()
             );
@@ -51,19 +56,18 @@ public class NotificationGatewayImpl implements NotificationGateway {
             if (MAX_RECEIVE_COUNT.equals(receiveCount)) {
                 orquestrationGateway.sendResponse(
                         TransactionInformationStorage.getOrderId(),
-                        Long.valueOf(TransactionInformationStorage.getCustomerId()),
-                        null,
-                        OrquestrationStepEnum.CREATE_PAYMENT,
+                        customerId,
+                        TransactionInformationStorage.getPaymentId(),
+                        OrquestrationStepEnum.NOTIFY_CUSTOMER,
                         Boolean.FALSE
                 );
             }
 
-            throw new PaymentCreationException(
-                    ExceptionCodes.PAYMENT_02_PAYMENT_CREATION,
+            throw new CustomerNotificationException(
+                    ExceptionCodes.CUSTOMER_05_NOTIFICATION_FAILED,
                     String.format("Error creating payment. Error: %s", ex.getMessage())
             );
         }
-         */
     }
 
 }

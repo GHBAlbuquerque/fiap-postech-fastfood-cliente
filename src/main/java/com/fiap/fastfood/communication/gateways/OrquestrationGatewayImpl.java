@@ -47,6 +47,7 @@ public class OrquestrationGatewayImpl implements OrquestrationGateway {
         );
 
         TransactionInformationStorage.fill(message.getHeaders());
+        TransactionInformationStorage.putPaymentId(message.getBody().getPaymentId());
         TransactionInformationStorage.putReceiveCount(headers.get(HEADER_RECEIVE_COUNT, String.class));
 
         try {
