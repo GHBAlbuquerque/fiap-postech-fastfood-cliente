@@ -21,4 +21,6 @@ public class GatewayBeanDeclaration {
     public AuthenticationGateway authenticationGateway(CognitoIdentityProviderClient cognitoIdentityProviderClient) {
         return new AuthenticationGatewayImpl(cognitoIdentityProviderClient);
     }
+
+    //TODO: COLOCAR NOVOS GATEWAYS
 }
