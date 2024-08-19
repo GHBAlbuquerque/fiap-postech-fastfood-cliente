@@ -7,7 +7,7 @@ public class LoggingPattern {
     public static final String COMMAND_ERROR_LOG = "[RESPONSE] SagaId: {} | Error receiving command from {}. | Error Message: {} | Message: {}";
 
     public static final String RESPONSE_INIT_LOG = "[COMMAND] SagaId: {} | Sending response to {}...";
-    public static final String RESPONSE_END_LOG = "[COMMAND] SagaId: {} | Response Succesfully sent to {}.";
+    public static final String RESPONSE_END_LOG = "[COMMAND] SagaId: {} | Response succesfully sent to {}.";
     public static final String RESPONSE_ERROR_LOG = "[COMMAND] SagaId: {} | Error sending response to {}. | Error Message: {} | Message: {}";
 
     public static final String NOTIFICATION_INIT_LOG = "[COMMAND] SagaId: {} | Sending {} notification to customer with id {} ...";
