@@ -1,15 +1,16 @@
 package com.fiap.fastfood.core.usecase;
 
-import com.fiap.fastfood.common.exceptions.custom.AlreadyRegisteredException;
-import com.fiap.fastfood.common.exceptions.custom.EntityNotFoundException;
-import com.fiap.fastfood.common.exceptions.custom.ExceptionCodes;
-import com.fiap.fastfood.common.exceptions.custom.IdentityProviderRegistrationException;
+import com.fiap.fastfood.common.exceptions.custom.*;
 import com.fiap.fastfood.common.interfaces.gateways.AuthenticationGateway;
 import com.fiap.fastfood.common.interfaces.gateways.CustomerGateway;
 import com.fiap.fastfood.common.interfaces.usecase.CustomerUseCase;
 import com.fiap.fastfood.core.entity.Customer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class CustomerUseCaseImpl implements CustomerUseCase {
+
+    private static final Logger logger = LogManager.getLogger(CustomerUseCaseImpl.class);
 
     @Override
     public Customer registerCustomer(Customer customer,
@@ -20,7 +21,7 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
         final var cpfInUse = validateCpfInUse(customer.getCpf(), customerGateway);
         final var validationResult = Customer.validate(customer, cpfInUse);
 
-        if (!validationResult.getIsValid()) {
+        if (Boolean.FALSE.equals(validationResult.getIsValid())) {
             throw new AlreadyRegisteredException(
                     ExceptionCodes.CUSTOMER_02_ALREADY_REGISTERED,
                     "Couldn't complete registration for customer.",
@@ -32,6 +33,7 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
                 customer.getPassword(),
                 customer.getEmail());
 
+        customer.setIsActive(Boolean.TRUE);
         return customerGateway.saveCustomer(customer);
     }
 
@@ -76,5 +78,34 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
     public Boolean confirmCustomerSignUp(String cpf, String code, AuthenticationGateway authenticationGateway)
             throws IdentityProviderRegistrationException {
         return authenticationGateway.confirmSignUp(cpf, code);
+    }
+
+    @Override
+    public Boolean deactivateCustomer(Long id, CustomerGateway customerGateway) throws CustomerDeactivationException {
+        try {
+            logger.info("Iniciating customer deactivation...");
+
+            final var customer = getCustomerById(id, customerGateway);
+
+            customer.setIsActive(Boolean.FALSE);
+            customer.setName(null);
+            customer.setContactNumber(null);
+            customer.setCpf(null);
+
+            logger.info("Name, Contact Number and CPF will be forever erased.");
+
+            customerGateway.saveCustomer(customer);
+
+            logger.info("Customer successfully deactivated; PII removed from database.");
+
+            return Boolean.TRUE;
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+
+            throw new CustomerDeactivationException(
+                    ExceptionCodes.CUSTOMER_07_CUSTOMER_DEACTIVATION,
+                    "Error when trying to deactivate customer. Please contact the admin."
+            );
+        }
     }
 }

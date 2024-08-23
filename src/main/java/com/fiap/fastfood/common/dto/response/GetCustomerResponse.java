@@ -18,6 +18,8 @@ public class GetCustomerResponse {
     private LocalDate birthday;
     private String cpf;
     private String email;
+    private String contactNumber;
     private LocalDateTime creationTimestamp;
     private LocalDateTime updateTimestamp;
+    private Boolean isActive;
 }

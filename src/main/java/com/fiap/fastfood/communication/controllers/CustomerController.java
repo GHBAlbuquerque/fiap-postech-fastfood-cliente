@@ -6,6 +6,7 @@ import com.fiap.fastfood.common.dto.request.RegisterCustomerRequest;
 import com.fiap.fastfood.common.dto.response.GetCustomerResponse;
 import com.fiap.fastfood.common.dto.response.RegisterCustomerResponse;
 import com.fiap.fastfood.common.exceptions.custom.AlreadyRegisteredException;
+import com.fiap.fastfood.common.exceptions.custom.CustomerDeactivationException;
 import com.fiap.fastfood.common.exceptions.custom.EntityNotFoundException;
 import com.fiap.fastfood.common.exceptions.custom.IdentityProviderRegistrationException;
 import com.fiap.fastfood.common.exceptions.model.ExceptionDetails;
@@ -104,5 +105,21 @@ public class CustomerController {
                 authenticationGateway);
 
         return ResponseEntity.ok(response);
+    }
+
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDetails.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDetails.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDetails.class)))
+    })
+    @DeleteMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
+    public ResponseEntity<?> deactivateCustomer(@PathVariable Long id)
+            throws EntityNotFoundException, CustomerDeactivationException {
+
+        useCase.deactivateCustomer(id, customerGateway);
+
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,21 +1,23 @@
 package com.fiap.fastfood.common.exceptions;
 
-import com.fiap.fastfood.common.exceptions.custom.AlreadyRegisteredException;
-import com.fiap.fastfood.common.exceptions.custom.CreateEntityException;
-import com.fiap.fastfood.common.exceptions.custom.EntityNotFoundException;
-import com.fiap.fastfood.common.exceptions.custom.IdentityProviderRegistrationException;
+import com.fiap.fastfood.common.exceptions.custom.*;
+import com.fiap.fastfood.common.exceptions.model.CustomError;
 import com.fiap.fastfood.common.exceptions.model.ExceptionDetails;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Date;
+
+import static com.fiap.fastfood.common.exceptions.custom.ExceptionCodes.CUSTOMER_08_CUSTOMER_CREATION;
 
 @RestControllerAdvice
 public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
@@ -71,13 +73,52 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ExceptionDetails> resourceException(IdentityProviderRegistrationException ex, WebRequest request) {
 
         final var message = new ExceptionDetails(
-                "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500",
+                "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
                 "Error trying to register new user on Identity Provider",
                 ex.getCode().name(),
                 ex.getMessage(),
                 HttpStatus.BAD_REQUEST.value(),
                 new Date(),
                 ex.getErrors());
+
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {CustomerDeactivationException.class})
+    public ResponseEntity<ExceptionDetails> resourceException(CustomerDeactivationException ex, WebRequest request) {
+
+        final var message = new ExceptionDetails(
+                "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+                "Error when trying to deactivate customer.",
+                ex.getCode().name(),
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                new Date(),
+                ex.getErrors());
+
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatusCode status,
+                                                                  WebRequest request
+    ) {
+
+        final var errors = ex.getBindingResult().getFieldErrors()
+                .stream()
+                .map(error -> new CustomError(error.getDefaultMessage(), error.getField(), error.getRejectedValue()))
+                .toList();
+
+        final var message = new ExceptionDetails(
+                "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+                "Error trying to register new user on Identity Provider",
+                CUSTOMER_08_CUSTOMER_CREATION.name(),
+                ex.getBody().getDetail(),
+                HttpStatus.BAD_REQUEST.value(),
+                new Date(),
+                errors);
 
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }

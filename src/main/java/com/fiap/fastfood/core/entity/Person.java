@@ -21,6 +21,7 @@ public class Person {
     private String cpf;
     private String email;
     private String password;
+    private String contactNumber;
     private LocalDateTime creationTimestamp;
     private LocalDateTime updateTimestamp;
 
