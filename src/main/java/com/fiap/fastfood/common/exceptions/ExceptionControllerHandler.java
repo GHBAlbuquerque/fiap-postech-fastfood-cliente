@@ -69,8 +69,8 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {IdentityProviderRegistrationException.class})
-    public ResponseEntity<ExceptionDetails> resourceException(IdentityProviderRegistrationException ex, WebRequest request) {
+    @ExceptionHandler(value = {IdentityProviderException.class})
+    public ResponseEntity<ExceptionDetails> resourceException(IdentityProviderException ex, WebRequest request) {
 
         final var message = new ExceptionDetails(
                 "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",

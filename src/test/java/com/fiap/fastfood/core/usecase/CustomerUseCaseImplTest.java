@@ -3,7 +3,7 @@ package com.fiap.fastfood.core.usecase;
 import com.fiap.fastfood.common.exceptions.custom.AlreadyRegisteredException;
 import com.fiap.fastfood.common.exceptions.custom.CustomerDeactivationException;
 import com.fiap.fastfood.common.exceptions.custom.EntityNotFoundException;
-import com.fiap.fastfood.common.exceptions.custom.IdentityProviderRegistrationException;
+import com.fiap.fastfood.common.exceptions.custom.IdentityProviderException;
 import com.fiap.fastfood.common.interfaces.gateways.AuthenticationGateway;
 import com.fiap.fastfood.common.interfaces.gateways.CustomerGateway;
 import com.fiap.fastfood.core.entity.Customer;
@@ -118,7 +118,7 @@ class CustomerUseCaseImplTest {
 
 
     @Test
-    void confirmCustomerSignUpTest() throws IdentityProviderRegistrationException {
+    void confirmCustomerSignUpTest() throws IdentityProviderException {
         final var authenticationcustomerGatewayMock = Mockito.mock(AuthenticationGateway.class);
 
         when(authenticationcustomerGatewayMock.confirmSignUp(anyString(), anyString()))

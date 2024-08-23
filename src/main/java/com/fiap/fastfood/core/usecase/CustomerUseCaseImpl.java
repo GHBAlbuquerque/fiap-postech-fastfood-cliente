@@ -18,7 +18,7 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
     public Customer registerCustomer(Customer customer,
                                      CustomerGateway customerGateway,
                                      AuthenticationGateway authenticationGateway)
-            throws AlreadyRegisteredException, IdentityProviderRegistrationException {
+            throws AlreadyRegisteredException, IdentityProviderException {
 
         final var cpfInUse = validateCpfInUse(customer.getCpf(), customerGateway);
         final var validationResult = Customer.validate(customer, cpfInUse);
@@ -78,24 +78,31 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
 
     @Override
     public Boolean confirmCustomerSignUp(String cpf, String code, AuthenticationGateway authenticationGateway)
-            throws IdentityProviderRegistrationException {
+            throws IdentityProviderException {
         return authenticationGateway.confirmSignUp(cpf, code);
     }
 
     @Override
-    public Boolean deactivateCustomer(Long id, CustomerGateway customerGateway) throws CustomerDeactivationException {
+    public Boolean deactivateCustomer(Long id,
+                                      CustomerGateway customerGateway,
+                                      AuthenticationGateway authenticationGateway) throws CustomerDeactivationException {
         try {
             logger.info("Iniciating customer deactivation...");
 
             final var customer = getCustomerById(id, customerGateway);
 
+            logger.info("Deactivating Identity Provider access.");
+
+            authenticationGateway.deleteUser(customer.getCpf(), customer.getPassword());
+
+            logger.info("Name, Contact Number and CPF will be forever erased.");
+
             customer.setIsActive(Boolean.FALSE);
             customer.setName(null);
             customer.setContactNumber(null);
+            customer.setBirthday(null);
             customer.setCpf(null);
             customer.setUpdateTimestamp(LocalDateTime.now());
-
-            logger.info("Name, Contact Number and CPF will be forever erased.");
 
             customerGateway.saveCustomer(customer);
 

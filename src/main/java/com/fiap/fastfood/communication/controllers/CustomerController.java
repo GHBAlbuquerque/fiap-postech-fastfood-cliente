@@ -8,7 +8,7 @@ import com.fiap.fastfood.common.dto.response.RegisterCustomerResponse;
 import com.fiap.fastfood.common.exceptions.custom.AlreadyRegisteredException;
 import com.fiap.fastfood.common.exceptions.custom.CustomerDeactivationException;
 import com.fiap.fastfood.common.exceptions.custom.EntityNotFoundException;
-import com.fiap.fastfood.common.exceptions.custom.IdentityProviderRegistrationException;
+import com.fiap.fastfood.common.exceptions.custom.IdentityProviderException;
 import com.fiap.fastfood.common.exceptions.model.ExceptionDetails;
 import com.fiap.fastfood.common.interfaces.gateways.AuthenticationGateway;
 import com.fiap.fastfood.common.interfaces.gateways.CustomerGateway;
@@ -46,7 +46,7 @@ public class CustomerController {
     @PostMapping(produces = "application/json", consumes = "application/json")
     public ResponseEntity<RegisterCustomerResponse> registerCustomer(
             @RequestBody @Valid RegisterCustomerRequest request
-    ) throws AlreadyRegisteredException, IdentityProviderRegistrationException {
+    ) throws AlreadyRegisteredException, IdentityProviderException {
 
         final var customerReq = CustomerBuilder.fromRequestToDomain(request);
         final var customer = useCase.registerCustomer(customerReq, customerGateway, authenticationGateway);
@@ -98,7 +98,7 @@ public class CustomerController {
     })
     @PostMapping(value = "/confirmation", produces = "application/json", consumes = "application/json")
     public ResponseEntity<Boolean> confirmSignUp(@RequestBody(required = true) @Valid ConfirmSignUpRequest confirmSignUpRequest)
-            throws IdentityProviderRegistrationException {
+            throws IdentityProviderException {
 
         final var response = useCase.confirmCustomerSignUp(confirmSignUpRequest.getCpf(),
                 confirmSignUpRequest.getCode(),
@@ -118,7 +118,7 @@ public class CustomerController {
     public ResponseEntity<?> deactivateCustomer(@PathVariable Long id)
             throws EntityNotFoundException, CustomerDeactivationException {
 
-        useCase.deactivateCustomer(id, customerGateway);
+        useCase.deactivateCustomer(id, customerGateway, authenticationGateway);
 
         return ResponseEntity.ok().build();
     }

@@ -1,6 +1,6 @@
 package com.fiap.fastfood.communication.gateways;
 
-import com.fiap.fastfood.common.exceptions.custom.IdentityProviderRegistrationException;
+import com.fiap.fastfood.common.exceptions.custom.IdentityProviderException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,7 +40,7 @@ public class AuthenticationGatewayImplTest {
                 .thenThrow(CognitoIdentityProviderException.class);
 
         Assertions.assertThrows(
-                IdentityProviderRegistrationException.class,
+                IdentityProviderException.class,
                 () -> authenticationGateway.createUserAuthentication("username", "password", "email")
         );
     }
@@ -61,7 +61,7 @@ public class AuthenticationGatewayImplTest {
                 .thenThrow(CognitoIdentityProviderException.class);
 
         Assertions.assertThrows(
-                IdentityProviderRegistrationException.class,
+                IdentityProviderException.class,
                 () -> authenticationGateway.confirmSignUp("username", "code")
         );
     }
