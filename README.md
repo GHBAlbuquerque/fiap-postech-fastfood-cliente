@@ -21,13 +21,6 @@ Os resultados destes estudos estão disponíveis no link abaixo:
 
 <br/>
 
-### 📐 Desenho de Solução (Arquitetura)
-
-Solução arquitetônica realizada (Cloud AWS) completa:
-![](misc/sol_fase_4.drawio.svg)
-
-<br/>
-
 ### 💻 Tecnologias
 
 Tecnologias utilizadas no projeto:
@@ -63,7 +56,7 @@ Compõem esta entrega:
 
 ### 💿 Getting started - Rodando com CICD e infra descentralizada na Cloud AWS
 
-Para instruções detalhadas de como rodar este projeto, leia **[este guia](https://github.com/GHBAlbuquerque/fiap-postech-infra-fastfood?tab=readme-ov-file#-como-executar-este-projeto).**
+Para instruções detalhadas de como rodar este projeto, leia **[este guia](https://github.com/GHBAlbuquerque/fiap-postech-fastfood-orquestrador/tree/main?tab=readme-ov-file#-como-executar-este-projeto).**
 
 <br/>
 
