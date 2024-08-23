@@ -140,7 +140,7 @@ class CustomerUseCaseImplTest {
         when(customerGatewayMock.getCustomerById(customerId)).thenReturn(customer);
 
         // Act
-        final var result = useCase.deactivateCustomer(customerId, customerGatewayMock);
+        final var result = useCase.deactivateCustomer(customerId, customerGatewayMock, authenticationcustomerGatewayMock);
 
         // Assert
         Assertions.assertTrue(result);
@@ -155,7 +155,7 @@ class CustomerUseCaseImplTest {
 
         // Act & Assert
         final var exception = assertThrows(CustomerDeactivationException.class, () ->
-                useCase.deactivateCustomer(customerId, customerGatewayMock)
+                useCase.deactivateCustomer(customerId, customerGatewayMock, authenticationcustomerGatewayMock)
         );
 
         Assertions.assertEquals("Error when trying to deactivate customer. Please contact the admin.", exception.getMessage());

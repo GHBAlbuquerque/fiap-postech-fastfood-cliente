@@ -105,6 +105,6 @@ class CustomerControllerTest {
                 .delete(path)
                 .then()
                 .log().ifValidationFails()
-                .statusCode(HttpStatus.OK.value());
+                .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 }
