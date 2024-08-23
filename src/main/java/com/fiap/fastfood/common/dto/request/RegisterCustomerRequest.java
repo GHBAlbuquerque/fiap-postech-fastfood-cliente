@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDate;
 
@@ -21,7 +20,7 @@ public class RegisterCustomerRequest {
     private LocalDate birthday;
 
     @NotBlank
-    @CPF
+    @Size(min = 11, message = "CPF deve ter 11 caracteres")
     private String cpf;
 
     @NotBlank

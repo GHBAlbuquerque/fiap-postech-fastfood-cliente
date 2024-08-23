@@ -2,6 +2,7 @@ package com.fiap.fastfood.communication.controllers;
 
 import com.fiap.fastfood.common.dto.request.ConfirmSignUpRequest;
 import com.fiap.fastfood.common.dto.request.RegisterCustomerRequest;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -19,13 +20,16 @@ class CustomerControllerTest {
     @LocalServerPort
     private int port;
 
-    private static final String CPF_TEST = String.valueOf(new SecureRandom().nextInt());
+    private static final String CPF_TEST = String.valueOf(Math.abs(new SecureRandom().nextLong(10_000_000_000L, 100_000_000_000L)));
+
+    private static String id;
 
     @Test
+    @Order(1)
     void givenCustomerToRegisterThenRespondWithStatusCreated() {
-        final var registerCustomerRequest = new RegisterCustomerRequest("name", LocalDate.now(), CPF_TEST, "email@email.com", "password");
+        final var registerCustomerRequest = new RegisterCustomerRequest("name", LocalDate.now(), CPF_TEST, "email@email.com", "password", "11864537659");
 
-        given()
+        final var response = given()
                 .port(port)
                 .header("Content-Type", "application/json")
                 .body(registerCustomerRequest)
@@ -35,9 +39,13 @@ class CustomerControllerTest {
                 .log().ifValidationFails()
                 .statusCode(HttpStatus.CREATED.value())
                 .contentType(JSON);
+
+        id = response.extract().body().jsonPath().get("id");
+        System.out.println(id);
     }
 
     @Test
+    @Order(2)
     void givenCpfThenRespondWithCustomer() {
         final var path = "/customers?cpf=" + CPF_TEST;
 
@@ -53,12 +61,15 @@ class CustomerControllerTest {
     }
 
     @Test
+    @Order(3)
     void givenIdThenRespondWithCustomer() {
+        final var path = "/customers/" + id;
+
         given()
                 .port(port)
                 .header("Content-Type", "application/json")
                 .when()
-                .get("/customers/1")
+                .get(path)
                 .then()
                 .log().ifValidationFails()
                 .statusCode(HttpStatus.OK.value())
@@ -66,6 +77,7 @@ class CustomerControllerTest {
     }
 
     @Test
+    @Order(4)
     void givenConfirmSignUpRequestThenRespondWithSuccess() {
         final var confirmSignUpRequest = new ConfirmSignUpRequest("74952165060", "code");
 
@@ -79,5 +91,20 @@ class CustomerControllerTest {
                 .log().ifValidationFails()
                 .statusCode(HttpStatus.BAD_REQUEST.value())
                 .contentType(JSON);
+    }
+
+    @Test
+    @Order(5)
+    void givenCustomerToDeactivateThenRespondWithStatusOK() {
+        final var path = "/customers/" + id;
+
+        given()
+                .port(port)
+                .header("Content-Type", "application/json")
+                .when()
+                .delete(path)
+                .then()
+                .log().ifValidationFails()
+                .statusCode(HttpStatus.OK.value());
     }
 }
