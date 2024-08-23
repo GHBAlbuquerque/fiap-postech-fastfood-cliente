@@ -8,6 +8,8 @@ import com.fiap.fastfood.core.entity.Customer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.LocalDateTime;
+
 public class CustomerUseCaseImpl implements CustomerUseCase {
 
     private static final Logger logger = LogManager.getLogger(CustomerUseCaseImpl.class);
@@ -91,6 +93,7 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
             customer.setName(null);
             customer.setContactNumber(null);
             customer.setCpf(null);
+            customer.setUpdateTimestamp(LocalDateTime.now());
 
             logger.info("Name, Contact Number and CPF will be forever erased.");
 
