@@ -127,7 +127,7 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
         if (!customer.getCpf().equals(cpf) || !customer.getPassword().equals(senha))
             throw new CustomerAuthenticationException(
                     ExceptionCodes.CUSTOMER_09_CUSTOMER_AUTHENTICATION,
-                    "Error when trying to deactivate customer. Please contact the admin."
+                    "User requesting Customer Deactivation is different from the one being deactivated. Authentication failed."
             );
     }
 }
