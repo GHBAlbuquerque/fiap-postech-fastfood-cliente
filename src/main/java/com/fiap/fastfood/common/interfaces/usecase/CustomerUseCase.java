@@ -21,5 +21,5 @@ public interface CustomerUseCase {
 
     Boolean confirmCustomerSignUp(String cpf, String code, AuthenticationGateway authenticationGateway) throws IdentityProviderException;
 
-    Boolean deactivateCustomer(Long id, CustomerGateway customerGateway, AuthenticationGateway authenticationGateway) throws EntityNotFoundException, CustomerDeactivationException;
+    Boolean deactivateCustomer(Long id, String cpf, String senha, CustomerGateway customerGateway, AuthenticationGateway authenticationGateway) throws EntityNotFoundException, CustomerDeactivationException;
 }

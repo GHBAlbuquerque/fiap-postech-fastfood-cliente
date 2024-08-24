@@ -115,10 +115,12 @@ public class CustomerController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDetails.class)))
     })
     @DeleteMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
-    public ResponseEntity<?> deactivateCustomer(@PathVariable Long id)
+    public ResponseEntity<?> deactivateCustomer(@PathVariable Long id,
+                                                @RequestHeader("cpf_cliente") String cpf,
+                                                @RequestHeader("senha_cliente") String senha)
             throws EntityNotFoundException, CustomerDeactivationException {
 
-        useCase.deactivateCustomer(id, customerGateway, authenticationGateway);
+        useCase.deactivateCustomer(id, cpf, senha, customerGateway, authenticationGateway);
 
         return ResponseEntity.ok().build();
     }

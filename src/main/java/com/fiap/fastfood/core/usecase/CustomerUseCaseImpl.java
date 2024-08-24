@@ -84,12 +84,16 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
 
     @Override
     public Boolean deactivateCustomer(Long id,
+                                      String cpf,
+                                      String senha,
                                       CustomerGateway customerGateway,
                                       AuthenticationGateway authenticationGateway) throws CustomerDeactivationException {
         try {
             logger.info("Iniciating customer deactivation...");
 
             final var customer = getCustomerById(id, customerGateway);
+
+            validateRequestingCustomer(customer, cpf, senha);
 
             logger.info("Deactivating Identity Provider access.");
 
@@ -117,5 +121,13 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
                     "Error when trying to deactivate customer. Please contact the admin."
             );
         }
+    }
+
+    private void validateRequestingCustomer(Customer customer, String cpf, String senha) throws CustomerAuthenticationException {
+        if (!customer.getCpf().equals(cpf) || !customer.getPassword().equals(senha))
+            throw new CustomerAuthenticationException(
+                    ExceptionCodes.CUSTOMER_09_CUSTOMER_AUTHENTICATION,
+                    "Error when trying to deactivate customer. Please contact the admin."
+            );
     }
 }
