@@ -85,7 +85,7 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
     @Override
     public Boolean deactivateCustomer(Long id,
                                       String cpf,
-                                      String senha,
+                                      String password,
                                       CustomerGateway customerGateway,
                                       AuthenticationGateway authenticationGateway) throws CustomerDeactivationException {
         try {
@@ -93,7 +93,7 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
 
             final var customer = getCustomerById(id, customerGateway);
 
-            validateRequestingCustomer(customer, cpf, senha);
+            validateRequestingCustomer(customer, cpf, password);
 
             logger.info("Deactivating Identity Provider access.");
 

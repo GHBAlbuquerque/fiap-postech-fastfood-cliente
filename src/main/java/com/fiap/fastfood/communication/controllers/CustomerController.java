@@ -117,10 +117,10 @@ public class CustomerController {
     @DeleteMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
     public ResponseEntity<?> deactivateCustomer(@PathVariable Long id,
                                                 @RequestHeader("cpf_cliente") String cpf,
-                                                @RequestHeader("senha_cliente") String senha)
+                                                @RequestHeader("senha_cliente") String password)
             throws EntityNotFoundException, CustomerDeactivationException {
 
-        useCase.deactivateCustomer(id, cpf, senha, customerGateway, authenticationGateway);
+        useCase.deactivateCustomer(id, cpf, password, customerGateway, authenticationGateway);
 
         return ResponseEntity.ok().build();
     }

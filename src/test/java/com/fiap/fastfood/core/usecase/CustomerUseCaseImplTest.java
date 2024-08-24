@@ -15,6 +15,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
+
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
@@ -47,8 +49,6 @@ class CustomerUseCaseImplTest {
 
     @Test
     void registerCustomerErrorTest() {
-        final var customerGatewayMock = Mockito.mock(CustomerGateway.class);
-        final var authenticationcustomerGatewayMock = Mockito.mock(AuthenticationGateway.class);
         final var customerMock = Mockito.mock(Customer.class);
 
         when(customerGatewayMock.getCustomerByCpf(any()))
@@ -62,7 +62,6 @@ class CustomerUseCaseImplTest {
 
     @Test
     void getCustomerByCpfTest() {
-        final var customerGatewayMock = Mockito.mock(CustomerGateway.class);
         final var customerMock = Mockito.mock(Customer.class);
 
         when(customerGatewayMock.getCustomerByCpf(anyString()))
@@ -77,8 +76,6 @@ class CustomerUseCaseImplTest {
 
     @Test
     void getCustomerByCpfErrorTest() {
-        final var customerGatewayMock = Mockito.mock(CustomerGateway.class);
-
         when(customerGatewayMock.getCustomerByCpf(anyString()))
                 .thenReturn(null);
 
@@ -90,7 +87,6 @@ class CustomerUseCaseImplTest {
 
     @Test
     void getCustomerByIdTest() {
-        final var customerGatewayMock = Mockito.mock(CustomerGateway.class);
         final var customerMock = Mockito.mock(Customer.class);
 
         when(customerGatewayMock.getCustomerById(anyLong()))
@@ -105,8 +101,6 @@ class CustomerUseCaseImplTest {
 
     @Test
     void getCustomerByIdErrorTest() {
-        final var customerGatewayMock = Mockito.mock(CustomerGateway.class);
-
         when(customerGatewayMock.getCustomerById(anyLong()))
                 .thenReturn(null);
 
@@ -119,8 +113,6 @@ class CustomerUseCaseImplTest {
 
     @Test
     void confirmCustomerSignUpTest() throws IdentityProviderException {
-        final var authenticationcustomerGatewayMock = Mockito.mock(AuthenticationGateway.class);
-
         when(authenticationcustomerGatewayMock.confirmSignUp(anyString(), anyString()))
                 .thenReturn(Boolean.TRUE);
 
@@ -133,14 +125,12 @@ class CustomerUseCaseImplTest {
     void testDeactivateCustomer_Success() throws CustomerDeactivationException {
         // Arrange
         final var customerId = 1L;
-        final var customer = new Customer();
-        customer.setId(customerId);
-        customer.setIsActive(Boolean.TRUE);
+        final var customer = new Customer("name", LocalDate.now(), "cpf", "email@email.com", "password", "11864537659", null, null, 1L, true);
 
         when(customerGatewayMock.getCustomerById(customerId)).thenReturn(customer);
 
         // Act
-        final var result = useCase.deactivateCustomer(customerId, customerGatewayMock, authenticationcustomerGatewayMock);
+        final var result = useCase.deactivateCustomer(customerId, "cpf", "password", customerGatewayMock, authenticationcustomerGatewayMock);
 
         // Assert
         Assertions.assertTrue(result);
@@ -155,7 +145,7 @@ class CustomerUseCaseImplTest {
 
         // Act & Assert
         final var exception = assertThrows(CustomerDeactivationException.class, () ->
-                useCase.deactivateCustomer(customerId, customerGatewayMock, authenticationcustomerGatewayMock)
+                useCase.deactivateCustomer(customerId, "cpf", "password", customerGatewayMock, authenticationcustomerGatewayMock)
         );
 
         Assertions.assertEquals("Error when trying to deactivate customer. Please contact the admin.", exception.getMessage());

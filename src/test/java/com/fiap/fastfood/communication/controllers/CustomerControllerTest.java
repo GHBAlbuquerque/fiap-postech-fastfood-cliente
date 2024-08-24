@@ -101,6 +101,8 @@ class CustomerControllerTest {
         given()
                 .port(port)
                 .header("Content-Type", "application/json")
+                .header("cpf_cliente", CPF_TEST)
+                .header("senha_cliente", "password")
                 .when()
                 .delete(path)
                 .then()
