@@ -64,6 +64,8 @@ tasks.named('test') {
 
 test {
 	testLogging {
+		testLogging.showStandardStreams = true
+		testLogging.exceptionFormat = 'full'
 		events "passed", "failed", "skipped"
 	}
 	finalizedBy jacocoTestReport
