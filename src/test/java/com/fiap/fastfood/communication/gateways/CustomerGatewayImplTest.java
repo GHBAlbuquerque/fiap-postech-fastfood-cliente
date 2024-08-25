@@ -17,7 +17,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CustomerGatewayImplTest {
+class CustomerGatewayImplTest {
 
     @Mock
     private CustomerRepository repository;

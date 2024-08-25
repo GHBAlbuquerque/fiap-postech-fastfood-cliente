@@ -5,13 +5,13 @@ import com.fiap.fastfood.common.exceptions.model.CustomException;
 
 import java.util.List;
 
-public class IdentityProviderRegistrationException extends CustomException {
+public class CustomerDeactivationException extends CustomException {
 
-    public IdentityProviderRegistrationException(String code, String message) {
+    public CustomerDeactivationException(ExceptionCodes code, String message) {
         super(code, message);
     }
 
-    public IdentityProviderRegistrationException(String code, String message, List<CustomError> customErrors) {
+    public CustomerDeactivationException(ExceptionCodes code, String message, List<CustomError> customErrors) {
         super(code, message, customErrors);
     }
 }

@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: fiap-postech-fastfood-cliente
-          image: 731362576078.dkr.ecr.us-east-1.amazonaws.com/fiap_postech_fastfood_cliente:${IMAGE_TAG} #pegar uri do repositório ECR
+          image: 673847524989.dkr.ecr.us-east-1.amazonaws.com/fiap_postech_fastfood_cliente:${IMAGE_TAG} #pegar uri do repositório ECR
           imagePullPolicy: Always
           resources:
             requests:
@@ -26,13 +26,15 @@ spec:
               memory: "1Gi"
           env:
             - name: DB_HOST
-              value: "jdbc:mysql://fiap-postech-db.cvnbiwixxp7f.us-east-1.rds.amazonaws.com:3306/clientes_db"
+              value: "jdbc:mysql://fiap-postech-db.c7yobqll710z.us-east-1.rds.amazonaws.com:3306/clientes_db"
             - name: DB_USER
               value: "admin"
             - name: DB_PASSWORD
               value: "password"
             - name: COGNITO_ID
-              value: "17u8qu5sh0aega9rk7g4sh61i4"
+              value: "5knk8gad7neb3h7n91rpcigicu"
+            - name: ACCOUNT_ID
+              value: "673847524989"
           ports:
             - containerPort: 80
               protocol: TCP

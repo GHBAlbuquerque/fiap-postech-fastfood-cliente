@@ -2,7 +2,7 @@ package com.fiap.fastfood.communication.controllers;
 
 import com.fiap.fastfood.common.dto.request.ConfirmSignUpRequest;
 import com.fiap.fastfood.common.dto.request.RegisterCustomerRequest;
-import com.fiap.fastfood.common.dto.response.GetCustomerResponse;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -10,24 +10,26 @@ import org.springframework.http.HttpStatus;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CustomerControllerTest {
+class CustomerControllerTest {
 
     @LocalServerPort
     private int port;
 
-    private final String CPF_TEST = String.valueOf(new SecureRandom().nextInt());
+    private static final String CPF_TEST = String.valueOf(Math.abs(new SecureRandom().nextLong(10_000_000_000L, 100_000_000_000L)));
+
+    private static String id;
 
     @Test
-    public void givenCustomerToRegisterThenRespondWithStatusCreated() {
-        final var registerCustomerRequest = new RegisterCustomerRequest("name", LocalDate.now(), CPF_TEST, "email@email.com", "password");
+    @Order(1)
+    void givenCustomerToRegisterThenRespondWithStatusCreated() {
+        final var registerCustomerRequest = new RegisterCustomerRequest("name", LocalDate.now(), CPF_TEST, "email@email.com", "password", "11864537659");
 
-        given()
+        final var response = given()
                 .port(port)
                 .header("Content-Type", "application/json")
                 .body(registerCustomerRequest)
@@ -37,19 +39,14 @@ public class CustomerControllerTest {
                 .log().ifValidationFails()
                 .statusCode(HttpStatus.CREATED.value())
                 .contentType(JSON);
+
+        id = response.extract().body().jsonPath().get("id");
+        System.out.println(id);
     }
 
     @Test
-    public void givenCpfThenRespondWithCustomer() {
-        final var getCustomerResponse = new GetCustomerResponse()
-                .setId(1L)
-                .setName("name")
-                .setCpf(CPF_TEST)
-                .setEmail("FIAPauth123_")
-                .setBirthday(LocalDate.now())
-                .setCreationTimestamp(LocalDateTime.now())
-                .setUpdateTimestamp(LocalDateTime.now());
-
+    @Order(2)
+    void givenCpfThenRespondWithCustomer() {
         final var path = "/customers?cpf=" + CPF_TEST;
 
         given()
@@ -59,17 +56,20 @@ public class CustomerControllerTest {
                 .get(path)
                 .then()
                 .log().ifValidationFails()
-                .statusCode(HttpStatus.NOT_FOUND.value())
+                .statusCode(HttpStatus.OK.value())
                 .contentType(JSON);
     }
 
     @Test
-    public void givenIdThenRespondWithCustomer() {
+    @Order(3)
+    void givenIdThenRespondWithCustomer() {
+        final var path = "/customers/" + id;
+
         given()
                 .port(port)
                 .header("Content-Type", "application/json")
                 .when()
-                .get("/customers/1")
+                .get(path)
                 .then()
                 .log().ifValidationFails()
                 .statusCode(HttpStatus.OK.value())
@@ -77,7 +77,8 @@ public class CustomerControllerTest {
     }
 
     @Test
-    public void givenConfirmSignUpRequestThenRespondWithSuccess() {
+    @Order(4)
+    void givenConfirmSignUpRequestThenRespondWithSuccess() {
         final var confirmSignUpRequest = new ConfirmSignUpRequest("74952165060", "code");
 
         given()
@@ -90,5 +91,22 @@ public class CustomerControllerTest {
                 .log().ifValidationFails()
                 .statusCode(HttpStatus.BAD_REQUEST.value())
                 .contentType(JSON);
+    }
+
+    @Test
+    @Order(5)
+    void givenCustomerToDeactivateThenRespondWithStatusOK() {
+        final var path = "/customers/" + id;
+
+        given()
+                .port(port)
+                .header("Content-Type", "application/json")
+                .header("cpf_cliente", CPF_TEST)
+                .header("senha_cliente", "password")
+                .when()
+                .delete(path)
+                .then()
+                .log().ifValidationFails()
+                .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 }

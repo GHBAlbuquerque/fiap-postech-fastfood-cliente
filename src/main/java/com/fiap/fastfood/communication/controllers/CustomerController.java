@@ -6,8 +6,9 @@ import com.fiap.fastfood.common.dto.request.RegisterCustomerRequest;
 import com.fiap.fastfood.common.dto.response.GetCustomerResponse;
 import com.fiap.fastfood.common.dto.response.RegisterCustomerResponse;
 import com.fiap.fastfood.common.exceptions.custom.AlreadyRegisteredException;
+import com.fiap.fastfood.common.exceptions.custom.CustomerDeactivationException;
 import com.fiap.fastfood.common.exceptions.custom.EntityNotFoundException;
-import com.fiap.fastfood.common.exceptions.custom.IdentityProviderRegistrationException;
+import com.fiap.fastfood.common.exceptions.custom.IdentityProviderException;
 import com.fiap.fastfood.common.exceptions.model.ExceptionDetails;
 import com.fiap.fastfood.common.interfaces.gateways.AuthenticationGateway;
 import com.fiap.fastfood.common.interfaces.gateways.CustomerGateway;
@@ -45,7 +46,7 @@ public class CustomerController {
     @PostMapping(produces = "application/json", consumes = "application/json")
     public ResponseEntity<RegisterCustomerResponse> registerCustomer(
             @RequestBody @Valid RegisterCustomerRequest request
-    ) throws AlreadyRegisteredException, IdentityProviderRegistrationException {
+    ) throws AlreadyRegisteredException, IdentityProviderException {
 
         final var customerReq = CustomerBuilder.fromRequestToDomain(request);
         final var customer = useCase.registerCustomer(customerReq, customerGateway, authenticationGateway);
@@ -97,12 +98,30 @@ public class CustomerController {
     })
     @PostMapping(value = "/confirmation", produces = "application/json", consumes = "application/json")
     public ResponseEntity<Boolean> confirmSignUp(@RequestBody(required = true) @Valid ConfirmSignUpRequest confirmSignUpRequest)
-            throws IdentityProviderRegistrationException {
+            throws IdentityProviderException {
 
         final var response = useCase.confirmCustomerSignUp(confirmSignUpRequest.getCpf(),
                 confirmSignUpRequest.getCode(),
                 authenticationGateway);
 
         return ResponseEntity.ok(response);
+    }
+
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDetails.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDetails.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDetails.class)))
+    })
+    @DeleteMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
+    public ResponseEntity<?> deactivateCustomer(@PathVariable Long id,
+                                                @RequestHeader("cpf_cliente") String cpf,
+                                                @RequestHeader("senha_cliente") String password)
+            throws EntityNotFoundException, CustomerDeactivationException {
+
+        useCase.deactivateCustomer(id, cpf, password, customerGateway, authenticationGateway);
+
+        return ResponseEntity.ok().build();
     }
 }

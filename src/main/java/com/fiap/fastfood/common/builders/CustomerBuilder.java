@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 
 public class CustomerBuilder {
 
+    public CustomerBuilder() {
+    }
+
     public static Customer fromRequestToDomain(RegisterCustomerRequest request) {
         return (Customer) new Customer()
                 .setName(request.getName())
@@ -16,7 +19,8 @@ public class CustomerBuilder {
                 .setCpf(request.getCpf())
                 .setCreationTimestamp(LocalDateTime.now())
                 .setEmail(request.getEmail())
-                .setPassword(request.getPassword());
+                .setPassword(request.getPassword())
+                .setContactNumber(request.getContactNumber());
     }
 
     public static GetCustomerResponse fromDomainToResponse(Customer customer) {
@@ -27,18 +31,23 @@ public class CustomerBuilder {
                 .setCpf(customer.getCpf())
                 .setEmail(customer.getEmail())
                 .setCreationTimestamp(customer.getCreationTimestamp())
-                .setUpdateTimestamp(customer.getUpdateTimestamp());
+                .setUpdateTimestamp(customer.getUpdateTimestamp())
+                .setIsActive(customer.getIsActive())
+                .setContactNumber(customer.getContactNumber());
     }
 
     public static Customer fromOrmToDomain(CustomerORM orm) {
-        return (Customer) new Customer()
-                .setId(orm.getId())
-                .setName(orm.getName())
-                .setBirthday(orm.getBirthday())
-                .setCpf(orm.getCpf())
-                .setCreationTimestamp(LocalDateTime.now())
-                .setEmail(orm.getEmail())
-                .setPassword(orm.getPassword());
+        return new Customer(orm.getName(),
+                orm.getBirthday(),
+                orm.getCpf(),
+                orm.getEmail(),
+                orm.getPassword(),
+                orm.getContactNumber(),
+                orm.getCreationTimestamp(),
+                orm.getUpdateTimestamp(),
+                orm.getId(),
+                orm.getIsActive()
+        );
     }
 
     public static CustomerORM fromDomainToOrm(Customer customer) {
@@ -49,7 +58,9 @@ public class CustomerBuilder {
                 .setCpf(customer.getCpf())
                 .setEmail(customer.getEmail())
                 .setPassword(customer.getPassword())
+                .setContactNumber(customer.getContactNumber())
                 .setCreationTimestamp(customer.getCreationTimestamp())
-                .setUpdateTimestamp(customer.getUpdateTimestamp());
+                .setUpdateTimestamp(customer.getUpdateTimestamp())
+                .setIsActive(customer.getIsActive());
     }
 }

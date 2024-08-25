@@ -1,27 +1,31 @@
 package com.fiap.fastfood.core.usecase;
 
-import com.fiap.fastfood.common.exceptions.custom.AlreadyRegisteredException;
-import com.fiap.fastfood.common.exceptions.custom.EntityNotFoundException;
-import com.fiap.fastfood.common.exceptions.custom.IdentityProviderRegistrationException;
+import com.fiap.fastfood.common.exceptions.custom.*;
 import com.fiap.fastfood.common.interfaces.gateways.AuthenticationGateway;
 import com.fiap.fastfood.common.interfaces.gateways.CustomerGateway;
 import com.fiap.fastfood.common.interfaces.usecase.CustomerUseCase;
 import com.fiap.fastfood.core.entity.Customer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.time.LocalDateTime;
 
 public class CustomerUseCaseImpl implements CustomerUseCase {
+
+    private static final Logger logger = LogManager.getLogger(CustomerUseCaseImpl.class);
 
     @Override
     public Customer registerCustomer(Customer customer,
                                      CustomerGateway customerGateway,
                                      AuthenticationGateway authenticationGateway)
-            throws AlreadyRegisteredException, IdentityProviderRegistrationException {
+            throws AlreadyRegisteredException, IdentityProviderException {
 
         final var cpfInUse = validateCpfInUse(customer.getCpf(), customerGateway);
         final var validationResult = Customer.validate(customer, cpfInUse);
 
-        if (!validationResult.getIsValid()) {
+        if (Boolean.FALSE.equals(validationResult.getIsValid())) {
             throw new AlreadyRegisteredException(
-                    "CUSTOMER-01",
+                    ExceptionCodes.CUSTOMER_02_ALREADY_REGISTERED,
                     "Couldn't complete registration for customer.",
                     validationResult.getErrors()
             );
@@ -31,6 +35,7 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
                 customer.getPassword(),
                 customer.getEmail());
 
+        customer.setIsActive(Boolean.TRUE);
         return customerGateway.saveCustomer(customer);
     }
 
@@ -41,7 +46,7 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
 
         if (customer == null) {
             throw new EntityNotFoundException(
-                    "CUSTOMER-02",
+                    ExceptionCodes.CUSTOMER_01_NOT_FOUND,
                     "Customer not found."
             );
         }
@@ -56,7 +61,7 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
 
         if (customer == null) {
             throw new EntityNotFoundException(
-                    "CUSTOMER-02",
+                    ExceptionCodes.CUSTOMER_01_NOT_FOUND,
                     "Client not found."
             );
         }
@@ -73,7 +78,56 @@ public class CustomerUseCaseImpl implements CustomerUseCase {
 
     @Override
     public Boolean confirmCustomerSignUp(String cpf, String code, AuthenticationGateway authenticationGateway)
-            throws IdentityProviderRegistrationException {
+            throws IdentityProviderException {
         return authenticationGateway.confirmSignUp(cpf, code);
+    }
+
+    @Override
+    public Boolean deactivateCustomer(Long id,
+                                      String cpf,
+                                      String password,
+                                      CustomerGateway customerGateway,
+                                      AuthenticationGateway authenticationGateway) throws CustomerDeactivationException {
+        try {
+            logger.info("Iniciating customer deactivation...");
+
+            final var customer = getCustomerById(id, customerGateway);
+
+            validateRequestingCustomer(customer, cpf, password);
+
+            logger.info("Deactivating Identity Provider access.");
+
+            authenticationGateway.deleteUser(customer.getCpf(), customer.getPassword());
+
+            logger.info("Name, Contact Number and CPF will be forever erased.");
+
+            customer.setIsActive(Boolean.FALSE);
+            customer.setName(null);
+            customer.setContactNumber(null);
+            customer.setBirthday(null);
+            customer.setCpf(null);
+            customer.setUpdateTimestamp(LocalDateTime.now());
+
+            customerGateway.saveCustomer(customer);
+
+            logger.info("Customer successfully deactivated; PII removed from database.");
+
+            return Boolean.TRUE;
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+
+            throw new CustomerDeactivationException(
+                    ExceptionCodes.CUSTOMER_07_CUSTOMER_DEACTIVATION,
+                    "Error when trying to deactivate customer. Please contact the admin."
+            );
+        }
+    }
+
+    private void validateRequestingCustomer(Customer customer, String cpf, String senha) throws CustomerAuthenticationException {
+        if (!customer.getCpf().equals(cpf) || !customer.getPassword().equals(senha))
+            throw new CustomerAuthenticationException(
+                    ExceptionCodes.CUSTOMER_09_CUSTOMER_AUTHENTICATION,
+                    "User requesting Customer Deactivation is different from the one being deactivated. Authentication failed."
+            );
     }
 }

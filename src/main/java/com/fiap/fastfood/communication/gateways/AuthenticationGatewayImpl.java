@@ -1,16 +1,20 @@
 package com.fiap.fastfood.communication.gateways;
 
-import com.fiap.fastfood.common.exceptions.custom.IdentityProviderRegistrationException;
+import com.fiap.fastfood.common.exceptions.custom.IdentityProviderException;
 import com.fiap.fastfood.common.interfaces.gateways.AuthenticationGateway;
+import com.fiap.fastfood.common.logging.LoggingPattern;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.CognitoIdentityProviderException;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.ConfirmSignUpRequest;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.SignUpRequest;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import static com.fiap.fastfood.common.exceptions.custom.ExceptionCodes.CUSTOMER_03_IDENTITY_PROVIDER;
+import static software.amazon.awssdk.services.cognitoidentityprovider.model.AuthFlowType.USER_PASSWORD_AUTH;
 
 @Component
 public class AuthenticationGatewayImpl implements AuthenticationGateway {
@@ -23,9 +27,7 @@ public class AuthenticationGatewayImpl implements AuthenticationGateway {
 
     private final CognitoIdentityProviderClient identityProviderClient;
 
-    private final String HMAC_SHA256_ALGORITHM = "HmacSHA256";
-
-    private final String EMAIL_FIELD = "email";
+    private static final Logger logger = LogManager.getLogger(AuthenticationGatewayImpl.class);
 
     public AuthenticationGatewayImpl(CognitoIdentityProviderClient identityProviderClient) {
         this.identityProviderClient = identityProviderClient;
@@ -33,12 +35,13 @@ public class AuthenticationGatewayImpl implements AuthenticationGateway {
 
 
     @Override
-    public Boolean createUserAuthentication(String userName,
+    public Boolean createUserAuthentication(String username,
                                             String password,
-                                            String email) throws IdentityProviderRegistrationException {
+                                            String email) throws IdentityProviderException {
 
+        String emailField = "email";
         var attributeType = AttributeType.builder()
-                .name(EMAIL_FIELD)
+                .name(emailField)
                 .value(email)
                 .build();
 
@@ -49,36 +52,101 @@ public class AuthenticationGatewayImpl implements AuthenticationGateway {
 
             SignUpRequest signUpRequest = SignUpRequest.builder()
                     .userAttributes(attrs)
-                    .username(userName)
+                    .username(username)
                     .clientId(identityProviderClientId)
                     .password(password)
                     .build();
 
             identityProviderClient.signUp(signUpRequest);
-            System.out.println(userName + " was registered.");
+
+            logger.info(LoggingPattern.IDENTITY_PROVIDER_USER_CREATED,
+                    username);
+
 
             return true;
 
-        } catch (CognitoIdentityProviderException e) {
-            throw new IdentityProviderRegistrationException(String.valueOf(e.statusCode()), e.getMessage());
+        } catch (CognitoIdentityProviderException ex) {
+
+            logger.error("Error using Identity Provider. Message: {}", ex.getMessage());
+
+            throw new IdentityProviderException(CUSTOMER_03_IDENTITY_PROVIDER, ex.getMessage());
         }
     }
 
-    public Boolean confirmSignUp(String userName, String code) throws IdentityProviderRegistrationException {
+    public Boolean confirmSignUp(String username, String code) throws IdentityProviderException {
         try {
-            ConfirmSignUpRequest signUpRequest = ConfirmSignUpRequest.builder()
+            final var signUpRequest = ConfirmSignUpRequest.builder()
                     .clientId(identityProviderClientId)
                     .confirmationCode(code)
-                    .username(userName)
+                    .username(username)
                     .build();
 
             identityProviderClient.confirmSignUp(signUpRequest);
-            System.out.println(userName + " was confirmed.");
+
+            logger.info(LoggingPattern.IDENTITY_PROVIDER_USER_CONFIRMED,
+                    username);
 
             return true;
 
-        } catch (CognitoIdentityProviderException e) {
-            throw new IdentityProviderRegistrationException(String.valueOf(e.statusCode()), e.getMessage());
+        } catch (CognitoIdentityProviderException ex) {
+
+            logger.error("Error using Identity Provider. Message: {}", ex.getMessage());
+
+            throw new IdentityProviderException(CUSTOMER_03_IDENTITY_PROVIDER, ex.getMessage());
         }
     }
+
+    public Boolean deleteUser(String username, String password) throws IdentityProviderException {
+
+        try {
+
+            final var token = getAuthToken(username, password);
+
+            final var deleteUserRequest = DeleteUserRequest.builder()
+                    .accessToken(token)
+                    .build();
+
+            identityProviderClient.deleteUser(deleteUserRequest);
+
+            logger.info(LoggingPattern.IDENTITY_PROVIDER_USER_DELETED,
+                    username);
+
+            return true;
+
+        } catch (CognitoIdentityProviderException ex) {
+
+            logger.error("Error using Identity Provider. Message: {}", ex.getMessage());
+
+            throw new IdentityProviderException(CUSTOMER_03_IDENTITY_PROVIDER, ex.getMessage());
+        }
+    }
+
+    private String getAuthToken(String username, String password) throws IdentityProviderException {
+        try {
+            final var authParameters = new HashMap<String, String>();
+
+            authParameters.put("USERNAME", username);
+            authParameters.put("PASSWORD", password);
+
+            final var authRequest = InitiateAuthRequest.builder()
+                    .authFlow(USER_PASSWORD_AUTH)
+                    .authParameters(authParameters)
+                    .clientId(identityProviderClientId)
+                    .build();
+
+            final var result = identityProviderClient.initiateAuth(authRequest);
+            final var optionalResult = result.authenticationResult();
+
+            if (null != optionalResult) return optionalResult.accessToken();
+
+            return null;
+
+        } catch (Exception ex) {
+
+            logger.error("Error using Identity Provider. Message: {}", ex.getMessage());
+
+            throw new IdentityProviderException(CUSTOMER_03_IDENTITY_PROVIDER, ex.getMessage());
+        }
+    }
+
 }
